@@ -1,1 +1,116 @@
+name: Update Packages from Google Sheets
 
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/update-packages.yml'
+
+jobs:
+  update-packages:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Fetch CSV from Google Sheets
+        env:
+          SHEET_ID: ${{ secrets.GOOGLE_SHEET_ID }}
+        run: |
+          curl -L "https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&sheet=Packages" > packages.csv
+          
+          if [ ! -s packages.csv ]; then
+            echo "❌ Failed to fetch CSV"
+            exit 1
+          fi
+          echo "✅ CSV downloaded"
+      
+      - name: Convert CSV to JSON
+        run: |
+          mkdir -p data
+          node -e "
+          const fs = require('fs');
+          
+          const csv = fs.readFileSync('packages.csv', 'utf8');
+          const lines = csv.split('\n').filter(l => l.trim());
+          
+          if (lines.length < 2) {
+            console.error('❌ No data rows');
+            process.exit(1);
+          }
+          
+          const headers = lines[0].split(',').map(h => h.replace(/^\"|\"$/g, '').trim());
+          
+          const packages = [];
+          for (let i = 1; i < lines.length; i++) {
+            const line = lines[i];
+            if (!line.trim()) continue;
+            
+            const values = [];
+            let current = '';
+            let inQuotes = false;
+            
+            for (let char of line) {
+              if (char === '\"') {
+                inQuotes = !inQuotes;
+              } else if (char === ',' && !inQuotes) {
+                values.push(current.trim());
+                current = '';
+              } else {
+                current += char;
+              }
+            }
+            values.push(current.trim());
+            
+            const pkg = {};
+            headers.forEach((header, index) => {
+              let value = values[index] || '';
+              value = value.replace(/^\"|\"$/g, '').trim();
+              if (value !== '') {
+                pkg[header] = value;
+              }
+            });
+            packages.push(pkg);
+          }
+          
+          const output = {
+            lastUpdated: new Date().toISOString(),
+            totalPackages: packages.length,
+            packages: packages
+          };
+          
+          fs.writeFileSync('data/packages.json', JSON.stringify(output, null, 2));
+          console.log(`✅ Converted ${packages.length} packages`);
+          "
+      
+      - name: Validate JSON
+        run: |
+          if [ ! -s data/packages.json ]; then
+            echo "❌ packages.json is empty!"
+            exit 1
+          fi
+          node -e "JSON.parse(require('fs').readFileSync('data/packages.json', 'utf8'));"
+          echo "✅ JSON valid"
+      
+      - name: Commit and push
+        run: |
+          git config user.name "DataHubLK Bot"
+          git config user.email "bot@datahublk.lk"
+          
+          if git diff --quiet data/packages.json; then
+            echo "No changes detected"
+          else
+            git add data/packages.json
+            git commit -m "🔄 Auto-update packages from Google Sheets [skip ci]"
+            git push
+            echo "✅ Changes pushed"
+          fi
+      
+      - name: Failure notification
+        if: failure()
+        run: echo "❌ Workflow failed! Check logs."

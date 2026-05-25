@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="DataHubLK - Compare Dialog, Mobitel, and Hutch mobile packages in Sri Lanka. Find prepaid, postpaid, combo, and call-only plans.">
+  <meta name="keywords" content="Dialog, Mobitel, Hutch, prepaid, postpaid, combo plans, call packages, Sri Lanka">
+  <title>DataHubLK | Compare Mobile Packages Sri Lanka</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    body { transition: background-color 0.3s ease, color 0.2s ease; }
+    
+    .glass-nav {
+      backdrop-filter: blur(12px);
+      background-color: rgba(255,255,255,0.7);
+      transition: all 0.3s ease;
+    }
+    .dark .glass-nav {
+      background-color: rgba(15,23,42,0.8);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    
+    .card-hover {
+      transition: transform 0.25s ease, box-shadow 0.3s ease;
+    }
+    .card-hover:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 25px -12px rgba(0,0,0,0.15);
+    }
+    .dark .card-hover:hover {
+      box-shadow: 0 25px 30px -12px rgba(0,0,0,0.5);
+    }
+    
+    .faq-item {
+      background: white;
+      border-radius: 16px;
+      border: 1px solid #e5e7eb;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    .dark .faq-item {
+      background: #1e293b;
+      border-color: #334155;
+    }
+    .faq-question {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 1.5rem;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1rem;
+      text-align: left;
+      color: #1f2937;
+    }
+    .dark .faq-question { color: #f1f5f9; }
+    .faq-question:hover { color: #3b82f6; }
+    .faq-question i { transition: transform 0.3s ease; color: #9ca3af; }
+    .faq-item.active .faq-question i { transform: rotate(180deg); }
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      padding: 0 1.5rem;
+    }
+    .faq-item.active .faq-answer {
+      max-height: 300px;
+      padding: 0 1.5rem 1.25rem 1.5rem;
+    }
+    .faq-answer p { color: #6b7280; line-height: 1.6; font-size: 0.875rem; }
+    .dark .faq-answer p { color: #94a3b8; }
+    
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .animated-bg-blob {
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(37,99,235,0.2) 0%, rgba(96,165,250,0) 70%);
+      border-radius: 50%;
+      filter: blur(60px);
+      pointer-events: none;
+    }
+    .dark .animated-bg-blob {
+      background: radial-gradient(circle, rgba(96,165,250,0.25) 0%, rgba(37,99,235,0) 70%);
+    }
+    
+    .pkg-type-chip.active, .usage-chip.active, .prov-chip.active {
+      background-color: #2563eb !important;
+      color: white !important;
+    }
+    .dark .pkg-type-chip.active, .dark .usage-chip.active, .dark .prov-chip.active {
+      background-color: #3b82f6 !important;
+    }
+    
+    .pkg-type-chip, .usage-chip, .prov-chip {
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    
+    .feature-icon { transition: transform 0.3s ease; }
+    .feature-card:hover .feature-icon { transform: scale(1.1); }
+    
+    .badge-prepaid { background: rgba(34,197,94,0.15); color: #22c55e; border: 1px solid rgba(34,197,94,0.3); }
+    .badge-postpaid { background: rgba(139,92,246,0.15); color: #8b5cf6; border: 1px solid rgba(139,92,246,0.3); }
+    .usage-badge { background: rgba(56,189,248,0.1); color: #38bdf8; border: 1px solid rgba(56,189,248,0.2); }
+    
+    .match-bar { height: 3px; background: rgba(56,189,248,0.15); border-radius: 2px; overflow: hidden; }
+    .match-fill { height: 100%; background: linear-gradient(90deg, #06b6d4, #3b82f6); border-radius: 2px; }
+  </style>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          animation: { 'float': 'float 5s ease-in-out infinite' },
+          keyframes: { float: { '0%,100%': { transform: 'translateY(0px)' }, '50%': { transform: 'translateY(-12px)' } } }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+
+  <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+    <div class="animated-bg-blob top-20 left-[-100px]"></div>
+    <div class="animated-bg-blob bottom-20 right-[-50px] w-[400px] h-[400px]"></div>
+  </div>
+
+  <!-- STICKY NAVBAR -->
+  <nav id="navbar" class="fixed top-0 left-0 w-full z-50 glass-nav shadow-sm transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-5 md:px-8 py-3 flex justify-between items-center">
+      <div class="text-2xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">DataHubLK</div>
+      <div class="hidden md:flex items-center space-x-7 text-sm font-medium">
+        <a href="#packages" class="hover:text-blue-600 transition">Packages</a>
+        <a href="#providers" class="hover:text-blue-600 transition">Providers</a>
+        <a href="#coverage" class="hover:text-blue-600 transition">Coverage</a>
+        <a href="#faq" class="hover:text-blue-600 transition">FAQ</a>
+        <button id="findPlanBtnNav" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-full text-sm font-semibold shadow-md transition">Find Best Plan</button>
+        <button id="darkModeToggleNav" class="text-xl p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition"><i class="fas fa-moon dark:hidden"></i><i class="fas fa-sun hidden dark:inline"></i></button>
+      </div>
+      <div class="flex items-center gap-3 md:hidden">
+        <button id="mobileMenuBtn" class="text-2xl"><i class="fas fa-bars"></i></button>
+        <button id="darkToggleMobile" class="text-xl"><i class="fas fa-moon dark:hidden"></i><i class="fas fa-sun hidden dark:inline"></i></button>
+      </div>
+    </div>
+    <div id="mobileMenu" class="hidden md:hidden bg-white/90 dark:bg-slate-800/95 backdrop-blur-lg border-t dark:border-slate-700 flex flex-col space-y-4 px-5 py-5 text-base font-medium">
+      <a href="#packages" class="hover:text-blue-600">Packages</a>
+      <a href="#providers" class="hover:text-blue-600">Providers</a>
+      <a href="#coverage" class="hover:text-blue-600">Coverage</a>
+      <a href="#faq" class="hover:text-blue-600">FAQ</a>
+      <button id="mobileFindPlanBtn" class="bg-blue-600 text-white rounded-full py-2">Find Best Plan</button>
+    </div>
+  </nav>
+
+  <main class="pt-20 relative z-10">
+    <!-- HERO SECTION -->
+    <section class="max-w-7xl mx-auto px-5 md:px-8 py-12 md:py-20 grid lg:grid-cols-2 gap-12 items-center">
+      <div class="reveal">
+        <div class="inline-flex items-center gap-2 bg-cyan-500/10 border border-cyan-500/20 rounded-full px-4 py-1.5 mb-6">
+          <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+          <span class="text-xs font-semibold text-cyan-400 tracking-wide">LIVE UPDATES</span>
+          <span class="w-px h-3 bg-cyan-500/30"></span>
+          <span class="text-xs text-slate-400">Updated Daily</span>
+        </div>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-5">
+          Find the Best<br>
+          <span class="bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">Mobile Packages</span><br>
+          in Sri Lanka
+        </h1>
+        <p class="text-slate-600 dark:text-slate-300 text-lg mb-8 max-w-lg">
+          Compare <strong class="text-cyan-500 dark:text-cyan-400">Prepaid, Postpaid, Combo & Call-only</strong> plans from Dialog, Mobitel, and Hutch.
+        </p>
+        <div class="flex flex-wrap gap-4 mb-8">
+          <button onclick="document.getElementById('packages').scrollIntoView({behavior:'smooth'})" class="bg-gradient-to-r from-blue-600 to-purple-600 hover:shadow-lg hover:shadow-cyan-500/25 px-6 py-3 rounded-xl font-semibold text-white transition">Compare Packages →</button>
+          <button onclick="document.getElementById('recommendation').scrollIntoView({behavior:'smooth'})" class="bg-gray-200 dark:bg-slate-800/50 border border-gray-300 dark:border-slate-600 hover:border-cyan-500 dark:hover:border-cyan-400 px-6 py-3 rounded-xl font-semibold transition">Smart Recommendation</button>
+        </div>
+        <div class="flex flex-wrap gap-3">
+          <div class="flex items-center gap-2 bg-gray-100 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 rounded-full px-3 py-1.5 text-xs"><span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> <span id="packageCount">Loading...</span> Packages</div>
+          <div class="flex items-center gap-2 bg-gray-100 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 rounded-full px-3 py-1.5 text-xs"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> 3 Networks</div>
+          <div class="flex items-center gap-2 bg-gray-100 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 rounded-full px-3 py-1.5 text-xs"><span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span> 4 Package Types</div>
+        </div>
+      </div>
+      <div class="relative reveal rounded-2xl bg-white/40 dark:bg-slate-800/40 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 p-5 shadow-2xl animate-float">
+        <div class="grid grid-cols-2 gap-3 text-sm">
+          <div class="bg-white dark:bg-slate-800 rounded-xl p-3 shadow"><div class="font-bold text-blue-600">Dialog Prepaid</div><div>Rs. 499</div><div class="text-xs">40GB + Unlimited Night</div><div class="w-full bg-gray-200 rounded-full h-1.5 mt-2"><div class="bg-blue-500 w-3/4 h-1.5 rounded-full"></div></div></div>
+          <div class="bg-white dark:bg-slate-800 rounded-xl p-3 shadow"><div class="font-bold text-emerald-600">Mobitel Postpaid</div><div>Rs. 599</div><div class="text-xs">60GB + 1000 mins</div><div class="w-full bg-gray-200 rounded-full h-1.5 mt-2"><div class="bg-emerald-500 w-2/3 h-1.5 rounded-full"></div></div></div>
+          <div class="bg-white dark:bg-slate-800 rounded-xl p-3 shadow col-span-2 flex justify-between items-center"><div><span class="font-bold">🔥 Best Value</span><div class="text-xs">Hutch Combo Plan</div></div><span class="bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 px-2 py-1 rounded-full text-xs">Save 32%</span></div>
+          <div class="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/30 dark:to-purple-900/30 rounded-xl p-3 flex items-center gap-2 col-span-2"><i class="fas fa-chart-line text-blue-500"></i><span>⭐ Recommendation: Dialog Weekly Mega</span></div>
+        </div>
+        <div class="absolute -top-3 -right-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xs px-2 py-1 rounded-full shadow-lg">+ Smart AI</div>
+      </div>
+    </section>
+
+    <!-- PROVIDER SECTION -->
+    <section id="providers" class="max-w-7xl mx-auto px-5 md:px-8 py-16 reveal">
+      <h2 class="text-3xl font-bold text-center">Choose Your Provider</h2>
+      <div class="grid md:grid-cols-3 gap-8 mt-10">
+        <div class="card-hover rounded-2xl bg-white dark:bg-slate-800 shadow-xl p-6 border border-gray-100 dark:border-gray-700">
+          <div class="flex items-center gap-4"><div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center text-2xl"><i class="fas fa-comment-dots text-blue-600"></i></div><div><h3 class="text-2xl font-bold">Dialog</h3><span class="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full">4.5G/5G Ready</span></div></div>
+          <p class="mt-3 text-gray-600 dark:text-gray-300">Nation's leader in coverage & speed. Best prepaid & postpaid plans.</p>
+          <div class="mt-4 flex justify-between items-center"><span class="text-sm">🔥 45+ packages</span><button class="provider-view text-blue-600 font-medium" data-provider="Dialog">View Packages →</button></div>
+        </div>
+        <div class="card-hover rounded-2xl bg-white dark:bg-slate-800 shadow-xl p-6 border border-gray-100 dark:border-gray-700">
+          <div class="flex items-center gap-4"><div class="w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center text-2xl"><i class="fas fa-tower-cell text-emerald-600"></i></div><div><h3 class="text-2xl font-bold">Mobitel</h3><span class="bg-purple-100 text-purple-700 text-xs px-2 py-0.5 rounded-full">Best for YouTube</span></div></div>
+          <p class="mt-3 text-gray-600 dark:text-gray-300">Premium 5G experience, great postpaid family plans & entertainment bundles.</p>
+          <div class="mt-4 flex justify-between items-center"><span class="text-sm">🎯 40+ packages</span><button class="provider-view text-blue-600 font-medium" data-provider="Mobitel">View Packages →</button></div>
+        </div>
+        <div class="card-hover rounded-2xl bg-white dark:bg-slate-800 shadow-xl p-6 border border-gray-100 dark:border-gray-700">
+          <div class="flex items-center gap-4"><div class="w-12 h-12 rounded-full bg-orange-100 dark:bg-orange-900/40 flex items-center justify-center text-2xl"><i class="fas fa-rocket text-orange-600"></i></div><div><h3 class="text-2xl font-bold">Hutch</h3><span class="bg-yellow-100 text-yellow-700 text-xs px-2 py-0.5 rounded-full">Unlimited Value</span></div></div>
+          <p class="mt-3 text-gray-600 dark:text-gray-300">Aggressive pricing, best combo plans & social media packs.</p>
+          <div class="mt-4 flex justify-between items-center"><span class="text-sm">⚡ 35+ packages</span><button class="provider-view text-blue-600 font-medium" data-provider="Hutch">View Packages →</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SMART RECOMMENDATION TOOL -->
+    <section id="recommendation" class="max-w-7xl mx-auto px-5 md:px-8 py-16 reveal bg-gradient-to-r from-blue-50/50 to-indigo-50/50 dark:from-slate-800/50 dark:to-slate-800/30 rounded-3xl my-6">
+      <div class="text-center"><h2 class="text-3xl font-bold">Smart Recommendation Engine</h2><p class="mt-2">Tell us your needs, we'll pick the perfect package</p></div>
+      <div class="grid md:grid-cols-2 gap-10 mt-8">
+        <div class="space-y-4 bg-white/60 dark:bg-slate-800/60 p-6 rounded-2xl backdrop-blur-sm">
+          <select id="budget" class="w-full p-3 rounded-xl border dark:bg-slate-900"><option value="500">Budget: Under Rs.500</option><option value="1000">Rs.500 - Rs.1000</option><option value="1500">Rs.1000+</option></select>
+          <select id="packageType" class="w-full p-3 rounded-xl border dark:bg-slate-900">
+            <option value="any">Any Package Type</option>
+            <option value="prepaid">📱 Pre-paid</option>
+            <option value="postpaid">💳 Post-paid</option>
+          </select>
+          <select id="usage" class="w-full p-3 rounded-xl border dark:bg-slate-900">
+            <option value="any">Any Usage</option>
+            <option value="unlimited">♾️ Unlimited Data</option>
+            <option value="youtube">📺 YouTube Lover</option>
+            <option value="tiktok">🎵 TikTok Addict</option>
+            <option value="facebook">📘 Facebook User</option>
+            <option value="gaming">🎮 Mobile Gaming</option>
+            <option value="night">🌙 Night Data User</option>
+            <option value="wfh">💼 Work from Home</option>
+            <option value="social">💬 Social Media</option>
+            <option value="cheapest">💰 Cheapest</option>
+            <option value="combo">🔗 Combo (Call+Data)</option>
+            <option value="call">📞 Call Only</option>
+          </select>
+          <select id="prefProvider" class="w-full p-3 rounded-xl border dark:bg-slate-900"><option value="any">Any Provider</option><option value="Dialog">Dialog</option><option value="Mobitel">Mobitel</option><option value="Hutch">Hutch</option></select>
+          <button id="runRecommendation" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:shadow-lg hover:shadow-cyan-500/25 text-white font-bold py-3 rounded-xl transition shadow">Find My Best Package →</button>
+        </div>
+        <div id="recResult" class="bg-white dark:bg-slate-800/80 rounded-2xl p-6 flex flex-col items-center justify-center border border-dashed border-gray-300 dark:border-gray-600 text-center min-h-[220px]"><i class="fas fa-magic text-4xl text-blue-400 mb-2"></i><p>Your personalized recommendation will appear here</p></div>
+      </div>
+    </section>
+
+    <!-- PACKAGE SEARCH + FILTER SECTION -->
+    <section id="packages" class="max-w-7xl mx-auto px-5 md:px-8 py-16 reveal">
+      <h2 class="text-3xl font-bold text-center">📱 Explore Mobile Packages</h2>
+      
+      <!-- ROW 1: PACKAGE TYPE -->
+      <div class="flex flex-wrap justify-center gap-2 mt-6 mb-4">
+        <button data-pkg-type="all" class="pkg-type-chip active px-5 py-2 rounded-full bg-cyan-500/20 text-cyan-400 text-sm font-semibold transition-all">✨ All Packages</button>
+        <button data-pkg-type="prepaid" class="pkg-type-chip px-5 py-2 rounded-full bg-slate-800 text-slate-300 text-sm font-semibold hover:bg-slate-700 transition-all">📱 Pre-paid</button>
+        <button data-pkg-type="postpaid" class="pkg-type-chip px-5 py-2 rounded-full bg-slate-800 text-slate-300 text-sm font-semibold hover:bg-slate-700 transition-all">💳 Post-paid</button>
+      </div>
+      
+      <!-- ROW 2: USAGE -->
+      <div class="flex flex-wrap justify-center gap-1.5 mb-4">
+        <button data-usage="all" class="usage-chip active px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-400 text-xs font-medium transition-all">✨ All Usage</button>
+        <button data-usage="unlimited" class="usage-chip px-3 py-1 rounded-full bg-slate-800 text-slate-300 text-xs font-medium hover:bg-slate-700 transition-all">♾️ Unlimited</button>
+        <button data-usage="youtube" class="usage-chip px-3 py-1 rounded-full bg-slate-800 text-slate-300 text-xs font-medium hover:bg-slate-700 transition-all">📺 YouTube</button>
+        <button data-usage="tiktok" class="usage-chip px-3 py-1 rounded-full bg-slate-800 text-slate-300 text-xs font-medium hover:bg-slate-700 transition-all">🎵 TikTok</button>
+        <button data-usage="facebook" class="usage-chip px-3 py-1 rounded-full bg-slate-800 text-slate-300 text-xs font-medium hover:bg-slate-700 transition-all">📘 Facebook</button>
+        <button data-usage="gaming" class="usage-chip px-3 py-1 rounded-full bg-slate-800 text-slate-300 text-xs font-medium hover:bg-slate-700 transition-all">🎮 Gaming</button>
+        <button data-usage="night" class="usage-chip px-3 py-1 rounded-full bg-slate-800 text-slate-300 text-xs font-medium hover:bg-slate-700 transition-all">🌙 Night Data</button>
+        <button data-usage="wfh" class="usage-chip px-3 py-1 rounded-full bg-slate-800 text-slate-300 text-xs font-medium hover:bg-slate-700 transition-all">💼 Work From Home</button>
+        <button data-usage="social" class="usage-chip px-3 py-1 rounded-full bg-slate-800 text-slate-300 text-xs font-medium hover:bg-slate-700 transition-all">💬 Social Media</button>
+        <button data-usage="cheapest" class="usage-chip px-3 py-1 rounded-full bg-slate-800 text-slate-300 text-xs font-medium hover:bg-slate-700 transition-all">💰 Cheapest</button>
+        <button data-usage="combo" class="usage-chip px-3 py-1 rounded-full bg-slate-800 text-slate-300 text-xs font-medium hover:bg-slate-700 transition-all">🔗 Combo</button>
+        <button data-usage="call" class="usage-chip px-3 py-1 rounded-full bg-slate-800 text-slate-300 text-xs font-medium hover:bg-slate-700 transition-all">📞 Call</button>
+      </div>
+      
+      <!-- ROW 3: PROVIDER -->
+      <div class="flex flex-wrap justify-center gap-2 mb-4">
+        <button data-provider="all" class="prov-chip active px-4 py-1.5 rounded-full bg-cyan-500/20 text-cyan-400 text-sm font-medium transition-all">All Networks</button>
+        <button data-provider="Dialog" class="prov-chip px-4 py-1.5 rounded-full bg-slate-800 text-slate-300 text-sm font-medium hover:bg-slate-700 transition-all">Dialog</button>
+        <button data-provider="Mobitel" class="prov-chip px-4 py-1.5 rounded-full bg-slate-800 text-slate-300 text-sm font-medium hover:bg-slate-700 transition-all">Mobitel</button>
+        <button data-provider="Hutch" class="prov-chip px-4 py-1.5 rounded-full bg-slate-800 text-slate-300 text-sm font-medium hover:bg-slate-700 transition-all">Hutch</button>
+      </div>
+      
+      <!-- Search and Sort -->
+      <div class="flex flex-wrap justify-center gap-3 my-6">
+        <div class="relative"><i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i><input type="text" id="packageSearch" placeholder="Search packages..." class="pl-10 pr-4 py-2 border rounded-full w-64 dark:bg-slate-800 dark:border-slate-700 focus:outline-none focus:border-blue-500"></div>
+        <select id="sortPackages" class="px-4 py-2 rounded-full border dark:bg-slate-800 dark:border-slate-700 cursor-pointer"><option value="price">Sort by: Lowest Price</option><option value="data">Sort by: Highest Data</option><option value="best">Sort by: Best Value</option></select>
+      </div>
+      
+      <div id="resultsCount" class="text-center text-sm text-slate-500 mb-4"></div>
+      <div id="packagesGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+      <div id="noResults" class="text-center py-12 text-slate-500 hidden"><i class="fas fa-search text-4xl mb-3 opacity-50"></i><p>No packages found. Try adjusting your search or filters.</p></div>
+    </section>
+
+    <!-- WHY USE DATABUHLK -->
+    <section class="max-w-7xl mx-auto px-5 md:px-8 py-16 reveal">
+      <h2 class="text-3xl font-bold text-center">Why DataHubLK?</h2>
+      <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-7 mt-10">
+        <div class="feature-card flex items-center gap-4 p-5 rounded-2xl bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm card-hover"><i class="fas fa-robot feature-icon text-blue-500 text-2xl"></i><span class="font-semibold">Smart Recommendations</span></div>
+        <div class="feature-card flex items-center gap-4 p-5 rounded-2xl bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm card-hover"><i class="fas fa-chart-line feature-icon text-blue-500 text-2xl"></i><span class="font-semibold">Compare All Providers</span></div>
+        <div class="feature-card flex items-center gap-4 p-5 rounded-2xl bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm card-hover"><i class="fas fa-sync-alt feature-icon text-blue-500 text-2xl"></i><span class="font-semibold">Updated Packages</span></div>
+        <div class="feature-card flex items-center gap-4 p-5 rounded-2xl bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm card-hover"><i class="fas fa-money-bill-wave feature-icon text-blue-500 text-2xl"></i><span class="font-semibold">Save Money</span></div>
+        <div class="feature-card flex items-center gap-4 p-5 rounded-2xl bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm card-hover"><i class="fas fa-search feature-icon text-blue-500 text-2xl"></i><span class="font-semibold">Fast Search</span></div>
+        <div class="feature-card flex items-center gap-4 p-5 rounded-2xl bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm card-hover"><i class="fas fa-mobile-alt feature-icon text-blue-500 text-2xl"></i><span class="font-semibold">Mobile Friendly</span></div>
+      </div>
+    </section>
+
+    <!-- COVERAGE SECTION -->
+    <section id="coverage" class="max-w-7xl mx-auto px-5 md:px-8 py-16 reveal">
+      <div class="rounded-2xl bg-gradient-to-r from-blue-100 to-indigo-100 dark:from-slate-800 dark:to-slate-700 p-8"><h2 class="text-2xl font-bold">Coverage Checker</h2><div class="flex gap-4 mt-4 flex-wrap"><input type="text" id="cityInput" placeholder="Enter city (Colombo, Kandy, Galle...)" class="flex-1 p-3 rounded-xl border dark:bg-slate-900"><button id="checkCoverageBtn" class="bg-gradient-to-r from-blue-600 to-purple-600 hover:shadow-lg hover:shadow-cyan-500/25 px-6 rounded-xl text-white transition">Check Coverage</button></div><div id="coverageResult" class="mt-6 flex flex-wrap gap-4 items-center"></div></div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="max-w-7xl mx-auto px-5 md:px-8 py-16 reveal">
+      <h2 class="text-3xl font-bold text-center">Trusted by Sri Lankans</h2>
+      <div class="grid md:grid-cols-3 gap-6 mt-10">
+        <div class="p-6 bg-white dark:bg-slate-800 rounded-2xl shadow card-hover"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-blue-200 dark:bg-blue-900 flex items-center justify-center font-bold text-blue-700">A</div><div><b>Amal Perera</b><div class="text-yellow-400">★★★★★</div></div></div><p class="mt-3 text-gray-600 dark:text-gray-300">"Found the perfect Hutch combo plan with call+data. Saved Rs. 800/month!"</p></div>
+        <div class="p-6 bg-white dark:bg-slate-800 rounded-2xl shadow card-hover"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-pink-200 dark:bg-pink-900 flex items-center justify-center font-bold text-pink-700">S</div><div><b>Shanika F.</b><div class="text-yellow-400">★★★★★</div></div></div><p class="mt-3 text-gray-600 dark:text-gray-300">"Dialog postpaid family plan is unbeatable! Their recommendation tool is magic."</p></div>
+        <div class="p-6 bg-white dark:bg-slate-800 rounded-2xl shadow card-hover"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-green-200 dark:bg-green-900 flex items-center justify-center font-bold text-green-700">R</div><div><b>Rizwan J.</b><div class="text-yellow-400">★★★★☆</div></div></div><p class="mt-3 text-gray-600 dark:text-gray-300">"Great comparison of prepaid vs postpaid. Mobitel 5G coverage is excellent."</p></div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="max-w-4xl mx-auto px-5 py-16 reveal"><h2 class="text-3xl font-bold text-center">Frequently Asked Questions</h2><div class="mt-8 space-y-4" id="faqContainer"></div></section>
+
+    <!-- FINAL CTA -->
+    <section class="max-w-6xl mx-auto px-5 py-16 text-center relative"><div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl p-12 shadow-2xl relative overflow-hidden"><div class="relative z-10"><h2 class="text-3xl md:text-4xl font-bold text-white">Stop Overpaying for Mobile Packages</h2><p class="text-blue-100 mt-2">Join thousands making smarter choices</p><div class="flex gap-4 justify-center mt-6"><button id="ctaCompareBtn" class="bg-white text-blue-700 px-8 py-3 rounded-full font-bold shadow hover:bg-gray-100 transition">Compare Packages</button><button id="ctaRecommendBtn" class="bg-transparent border-2 border-white text-white px-8 py-3 rounded-full font-bold hover:bg-white/10 transition">Get Recommendations</button></div></div><div class="absolute inset-0 bg-black/20"></div></div></section>
+
+    <footer class="bg-gray-100 dark:bg-slate-800 mt-12 py-10"><div class="max-w-7xl mx-auto px-5 grid md:grid-cols-4 gap-8"><div><div class="font-bold text-xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">DataHubLK</div><p class="text-sm mt-2 text-gray-600 dark:text-gray-400">Smart comparison for Sri Lanka</p><p class="text-xs mt-2 text-slate-500">Last updated: <span id="lastUpdated">--</span></p></div><div><h4 class="font-semibold">Quick Links</h4><ul class="text-sm space-y-1 mt-2 text-gray-600 dark:text-gray-400"><li><a href="#packages" class="hover:text-blue-600">Packages</a></li><li><a href="#providers" class="hover:text-blue-600">Providers</a></li></ul></div><div><h4 class="font-semibold">Providers</h4><ul class="text-sm space-y-1 mt-2 text-gray-600 dark:text-gray-400"><li>Dialog</li><li>Mobitel</li><li>Hutch</li></ul></div><div><i class="fab fa-facebook mr-2 hover:text-blue-600 cursor-pointer transition"></i><i class="fab fa-twitter mr-2 hover:text-blue-600 cursor-pointer transition"></i><i class="fab fa-instagram hover:text-pink-600 cursor-pointer transition"></i><p class="text-xs mt-4 text-gray-500">Package prices may change based on telecom provider updates.</p><p class="text-xs text-gray-500 mt-1">© 2025 DataHubLK</p></div></div></footer>
+  </main>
+
+  <script>
+    // Global variables
+    let packages = [];
+    let currentPkgType = "all", currentUsage = "all", currentProvider = "all", currentSearch = "", currentSort = "price";
+    
+    // Helper functions
+    function getPackageTypeBadge(type) {
+      if (type === "prepaid") {
+        return '<span class="badge-prepaid text-xs px-2 py-0.5 rounded-full ml-2">📱 Pre-paid</span>';
+      } else if (type === "postpaid") {
+        return '<span class="badge-postpaid text-xs px-2 py-0.5 rounded-full ml-2">💳 Post-paid</span>';
+      }
+      return '';
+    }
+    
+    function getUsageBadges(usages) {
+      if (!usages) return '';
+      const icons = { 
+        unlimited: '♾️', youtube: '📺', tiktok: '🎵', facebook: '📘',
+        gaming: '🎮', night: '🌙', wfh: '💼', social: '💬', 
+        cheapest: '💰', combo: '🔗', call: '📞' 
+      };
+      const usageArray = Array.isArray(usages) ? usages : usages.split(',');
+      return usageArray.slice(0, 3).map(u => `<span class="usage-badge text-xs px-2 py-0.5 rounded-full ml-1">${icons[u.trim()] || u}</span>`).join('');
+    }
+    
+    function formatPackageDetails(pkg) {
+      let details = [];
+      if (pkg.data_gb) details.push(`<div class="flex items-center gap-1"><i class="fas fa-tachometer-alt text-xs w-4"></i> <span>${pkg.data_gb}</span></div>`);
+      if (pkg.voice_mins) details.push(`<div class="flex items-center gap-1"><i class="fas fa-phone-alt text-xs w-4"></i> <span>${pkg.voice_mins}</span></div>`);
+      if (pkg.sms) details.push(`<div class="flex items-center gap-1"><i class="fas fa-envelope text-xs w-4"></i> <span>${pkg.sms} SMS</span></div>`);
+      details.push(`<div class="flex items-center gap-1"><i class="fas fa-calendar-alt text-xs w-4"></i> <span>${pkg.validity_days || '30'} days</span></div>`);
+      return details.join('');
+    }
+    
+    function renderPackages() {
+      let filtered = packages.filter(p => {
+        if (currentPkgType !== "all" && p.type !== currentPkgType) return false;
+        if (currentUsage !== "all") {
+          const pkgUsages = Array.isArray(p.usages) ? p.usages : (p.usages ? p.usages.split(',') : []);
+          if (!pkgUsages.includes(currentUsage)) return false;
+        }
+        if (currentProvider !== "all" && p.provider !== currentProvider) return false;
+        if (currentSearch && !p.name?.toLowerCase().includes(currentSearch.toLowerCase()) && !p.provider?.toLowerCase().includes(currentSearch.toLowerCase())) return false;
+        return true;
+      });
+      
+      if (currentSort === "price") filtered.sort((a,b) => (a.price || 0) - (b.price || 0));
+      else if (currentSort === "data") filtered.sort((a,b) => (parseFloat(b.data_gb) || 0) - (parseFloat(a.data_gb) || 0));
+      else filtered.sort((a,b) => (b.badge && b.badge.includes("Best") ? 1 : 0) - (a.badge && a.badge.includes("Best") ? 1 : 0));
+      
+      const grid = document.getElementById("packagesGrid"), noResults = document.getElementById("noResults"), countDiv = document.getElementById("resultsCount");
+      if (filtered.length === 0) { grid.innerHTML = ""; noResults.classList.remove("hidden"); countDiv.innerHTML = ""; return; }
+      
+      noResults.classList.add("hidden");
+      countDiv.innerHTML = `<span class="px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">${filtered.length} packages found</span>`;
+      
+      grid.innerHTML = filtered.map(p => {
+        const providerColor = p.provider === "Dialog" ? "text-red-400" : p.provider === "Mobitel" ? "text-blue-400" : "text-orange-400";
+        const matchScore = currentUsage !== "all" && p.usages?.includes(currentUsage) ? Math.floor(Math.random() * 20) + 80 : Math.floor(Math.random() * 40) + 60;
+        return `<div class="rounded-xl bg-white dark:bg-slate-800 p-5 shadow-md border hover:shadow-lg transition hover:border-blue-300 dark:hover:border-blue-700">
+          <div class="flex justify-between items-start mb-3"><div><span class="font-bold ${providerColor} text-lg">${p.provider}</span>${getPackageTypeBadge(p.type)}</div><span class="font-mono font-bold text-cyan-400 text-xl">Rs. ${p.price || '?'}</span></div>
+          <div class="flex items-center justify-between mb-2"><h3 class="font-bold text-lg">${p.name}</h3>${getUsageBadges(p.usages)}</div>
+          <div class="grid grid-cols-2 gap-2 mb-3 text-sm text-gray-600 dark:text-gray-400">${formatPackageDetails(p)}</div>
+          <div class="text-xs text-slate-500 dark:text-slate-500 mb-3">✨ ${p.features || 'Standard package'}</div>
+          ${p.badge ? `<div class="inline-block bg-yellow-200 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-200 text-xs px-2 py-1 rounded-full mb-2">🏆 ${p.badge}</div>` : ''}
+          <div class="match-bar mt-2 mb-1"><div class="match-fill" style="width: ${matchScore}%"></div></div>
+          <div class="text-xs text-slate-500">Match score: ${matchScore}/100</div>
+        </div>`;
+      }).join('');
+    }
+    
+    // Load packages from JSON file (generated by GitHub Actions)
+    async function loadPackages() {
+      try {
+        const response = await fetch('data/packages.json?v=' + Date.now());
+        const data = await response.json();
+        packages = data.packages || [];
+        
+        // Update package count in hero
+        const packageCountSpan = document.getElementById('packageCount');
+        if (packageCountSpan) packageCountSpan.textContent = packages.length;
+        
+        // Update last updated timestamp
+        const lastUpdatedSpan = document.getElementById('lastUpdated');
+        if (lastUpdatedSpan && data.lastUpdated) {
+          const date = new Date(data.lastUpdated);
+          lastUpdatedSpan.textContent = date.toLocaleString();
+        }
+        
+        renderPackages();
+      } catch (error) {
+        console.error('Failed to load packages:', error);
+        document.getElementById('packagesGrid').innerHTML = `
+          <div class="col-span-full text-center py-12">
+            <i class="fas fa-exclamation-triangle text-4xl text-red-500 mb-3"></i>
+            <p class="text-slate-500">Unable to load packages. Please try again later.</p>
+          </div>
+        `;
+      }
+    }
+    
+    // Event Listeners
+    document.querySelectorAll(".pkg-type-chip").forEach(btn => btn.addEventListener("click", () => { document.querySelectorAll(".pkg-type-chip").forEach(b => b.classList.remove("active")); btn.classList.add("active"); currentPkgType = btn.getAttribute("data-pkg-type"); renderPackages(); }));
+    document.querySelectorAll(".usage-chip").forEach(btn => btn.addEventListener("click", () => { document.querySelectorAll(".usage-chip").forEach(b => b.classList.remove("active")); btn.classList.add("active"); currentUsage = btn.getAttribute("data-usage"); renderPackages(); }));
+    document.querySelectorAll(".prov-chip").forEach(btn => btn.addEventListener("click", () => { document.querySelectorAll(".prov-chip").forEach(b => b.classList.remove("active")); btn.classList.add("active"); currentProvider = btn.getAttribute("data-provider"); renderPackages(); }));
+    document.getElementById("packageSearch")?.addEventListener("input", e => { currentSearch = e.target.value; renderPackages(); });
+    document.getElementById("sortPackages")?.addEventListener("change", e => { currentSort = e.target.value; renderPackages(); });
+    
+    // Recommendation
+    document.getElementById("runRecommendation")?.addEventListener("click", () => {
+      let budget = parseInt(document.getElementById("budget").value);
+      let pkgType = document.getElementById("packageType").value;
+      let usage = document.getElementById("usage").value;
+      let pref = document.getElementById("prefProvider").value;
+      let recPackage = packages.find(p => {
+        if (pkgType !== "any" && p.type !== pkgType) return false;
+        if (usage !== "any") {
+          const pkgUsages = Array.isArray(p.usages) ? p.usages : (p.usages ? p.usages.split(',') : []);
+          if (!pkgUsages.includes(usage)) return false;
+        }
+        if (pref !== "any" && p.provider !== pref) return false;
+        if ((p.price || 0) > budget + 200) return false;
+        return true;
+      }) || packages[0];
+      document.getElementById("recResult").innerHTML = `<div class="animate-pulse"><i class="fas fa-crown text-3xl text-yellow-500"></i><h3 class="text-xl font-bold mt-2">${recPackage?.name || 'No package found'}</h3><p class="text-sm">Provider: ${recPackage?.provider || '-'} | Rs.${recPackage?.price || '-'}</p><button class="mt-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-full transition">Get this Plan →</button></div>`;
+    });
+    
+    // Coverage
+    document.getElementById("checkCoverageBtn")?.addEventListener("click", () => {
+      let city = document.getElementById("cityInput").value;
+      document.getElementById("coverageResult").innerHTML = `<div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-md"><i class="fas fa-check-circle text-green-500"></i> <span class="font-semibold">4G/5G available in ${city || 'your area'}</span><div class="mt-2">📶 Signal Strength: 92%</div><div class="mt-1">⭐ Recommended: Dialog / Mobitel</div></div>`;
+    });
+    
+    // FAQ
+    const faqData = [
+      { q: "What's the difference between Prepaid and Postpaid?", a: "Prepaid plans require upfront payment and offer flexibility. Postpaid plans bill you monthly and include family sharing, higher data caps, and added benefits." },
+      { q: "What are Combo (Call+Data) plans?", a: "Combo plans include both call minutes and data in one package. Perfect for users who need both voice calls and mobile data." },
+      { q: "Best package for heavy callers?", a: "Dialog's Call 50GB plan offers 5000 minutes for Rs. 499. Hutch Call Pack at Rs. 199 for 500 mins is great for budget." },
+      { q: "What's the cheapest data plan in Sri Lanka?", a: "Hutch's 500MB starter pack at Rs. 29/day is the cheapest." },
+      { q: "Which provider has best coverage?", a: "Dialog leads nationwide with 98% coverage, followed by Mobitel at 92% and Hutch at 78%." }
+    ];
+    const faqContainer = document.getElementById("faqContainer");
+    faqData.forEach((item) => { const faqItem = document.createElement("div"); faqItem.className = "faq-item"; faqItem.innerHTML = `<button class="faq-question" onclick="this.closest('.faq-item').classList.toggle('active')"><span>${item.q}</span><i class="fas fa-chevron-down"></i></button><div class="faq-answer"><p>${item.a}</p></div>`; faqContainer.appendChild(faqItem); });
+    
+    // Dark mode
+    const setTheme = (dark) => { if (dark) document.documentElement.classList.add("dark"); else document.documentElement.classList.remove("dark"); localStorage.setItem("theme", dark ? "dark" : "light"); };
+    const toggleDark = () => setTheme(!document.documentElement.classList.contains("dark"));
+    if (localStorage.getItem("theme") === "dark") setTheme(true);
+    document.querySelectorAll("#darkModeToggleNav, #darkToggleMobile").forEach(btn => btn?.addEventListener("click", toggleDark));
+    
+    // Mobile menu
+    const mobileMenu = document.getElementById("mobileMenu"), mobileBtn = document.getElementById("mobileMenuBtn");
+    mobileBtn?.addEventListener("click", () => mobileMenu.classList.toggle("hidden"));
+    
+    // Smooth scroll
+    document.querySelectorAll("a[href^='#']").forEach(anchor => anchor.addEventListener("click", function (e) { let hash = this.getAttribute("href"); if (hash !== "#") { e.preventDefault(); document.querySelector(hash)?.scrollIntoView({ behavior: "smooth" }); mobileMenu?.classList.add("hidden"); } }));
+    
+    // Scroll reveal
+    const revealElements = document.querySelectorAll(".reveal");
+    const observer = new IntersectionObserver((entries) => { entries.forEach(e => { if (e.isIntersecting) e.target.classList.add("revealed"); }); }, { threshold: 0.1 });
+    revealElements.forEach(el => observer.observe(el));
+    
+    // Navbar scroll
+    window.addEventListener("scroll", () => { document.getElementById("navbar")?.classList.toggle("shadow-md", window.scrollY > 20); });
+    
+    // Button actions
+    document.getElementById("heroCompareBtn")?.addEventListener("click", () => document.getElementById("packages").scrollIntoView({ behavior: "smooth" }));
+    document.getElementById("heroRecommendBtn")?.addEventListener("click", () => document.getElementById("recommendation").scrollIntoView({ behavior: "smooth" }));
+    document.getElementById("findPlanBtnNav")?.addEventListener("click", () => document.getElementById("recommendation").scrollIntoView({ behavior: "smooth" }));
+    document.getElementById("mobileFindPlanBtn")?.addEventListener("click", () => { document.getElementById("recommendation").scrollIntoView({ behavior: "smooth" }); mobileMenu.classList.add("hidden"); });
+    document.getElementById("ctaCompareBtn")?.addEventListener("click", () => document.getElementById("packages").scrollIntoView({ behavior: "smooth" }));
+    document.getElementById("ctaRecommendBtn")?.addEventListener("click", () => document.getElementById("recommendation").scrollIntoView({ behavior: "smooth" }));
+    
+    // Provider view buttons
+    document.querySelectorAll(".provider-view").forEach(btn => btn.addEventListener("click", e => { currentProvider = btn.getAttribute("data-provider"); document.querySelectorAll(".prov-chip").forEach(b => b.classList.remove("active")); document.querySelector(`.prov-chip[data-provider="${currentProvider}"]`)?.classList.add("active"); renderPackages(); document.getElementById("packages").scrollIntoView({ behavior: "smooth" }); }));
+    
+    // Initialize
+    loadPackages();
+  </script>
+</body>
+</html>
